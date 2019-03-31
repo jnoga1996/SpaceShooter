@@ -3,13 +3,16 @@ package com.mygdx.game.Objects;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 
-public class Player {
+public class Bullet {
+    private static final float MAX_SPEED = 600f;
+    private static final float COLLISION_RADIUS = 7f;
 
-    private static final float COLLISION_RADIUS = 24f;
+    private float x;
+    private float y;
     private final Circle collisionCircle;
 
-    public Circle getCollisionCircle() {
-        return collisionCircle;
+    public Bullet() {
+        collisionCircle = new Circle(x, y, COLLISION_RADIUS);
     }
 
     public float getX() {
@@ -28,16 +31,6 @@ public class Player {
         this.y = y;
     }
 
-    private float x = 0;
-    private float y = 0;
-    private static final float DIVE_ACCEL = 0.30F;
-    private static final float FLY_ACCEL = 5F;
-    private float ySpeed = 0;
-
-    public Player() {
-        collisionCircle = new Circle(x,y, COLLISION_RADIUS);
-    }
-
     public void drawDebug(ShapeRenderer shapeRenderer) {
         shapeRenderer.circle(collisionCircle.x, collisionCircle.y,
                 collisionCircle.radius);
@@ -54,13 +47,7 @@ public class Player {
         collisionCircle.setY(y);
     }
 
-    public void update() {
-        ySpeed -= DIVE_ACCEL;
-        setPosition(x, y + ySpeed);
-    }
-
-    public void flyUp() {
-        ySpeed = FLY_ACCEL;
-        setPosition(x, y + ySpeed);
+    public void update(float delta) {
+        setPosition(x + MAX_SPEED*delta, y);
     }
 }

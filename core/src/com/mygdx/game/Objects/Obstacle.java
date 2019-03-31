@@ -2,6 +2,7 @@ package com.mygdx.game.Objects;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
@@ -40,5 +41,10 @@ public class Obstacle {
 
     public void update(float delta) {
         setPosition(x - (MAX_SPEED_PER_SECOND * delta));
+    }
+
+    public boolean isPlayerColliding(Player player) {
+        Circle playerCollisionCircle = player.getCollisionCircle();
+        return Intersector.overlaps(playerCollisionCircle, collisionCircle);
     }
 }

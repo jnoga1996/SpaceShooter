@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
 
@@ -19,6 +20,7 @@ public class GameScreen extends ScreenAdapter {
     private static final float WORLD_WIDTH = 640;
     private static final float WORLD_HEIGHT = 480;
     private static final float GAP_BETWEEN_OBSTACLES = 600F;
+    private int score = 0;
 
     private ShapeRenderer shapeRenderer;
     private Viewport viewport;
@@ -26,8 +28,8 @@ public class GameScreen extends ScreenAdapter {
     private SpriteBatch batch;
 
     private Player player = new Player();
-    private Obstacle obstacle = new Obstacle();
     private Array<Obstacle> obstacles = new Array<Obstacle>();
+    private Array<Bullet> bullets = new Array<Bullet>();
 
     @Override
     public void resize(int width, int height) {
@@ -43,7 +45,7 @@ public class GameScreen extends ScreenAdapter {
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         player.setPosition(WORLD_WIDTH/4, WORLD_HEIGHT/4);
-        obstacle.setPosition(WORLD_WIDTH/2);
+        //bullet.setPosition(player.getX(), player.getY());
     }
 
     @Override
@@ -57,21 +59,25 @@ public class GameScreen extends ScreenAdapter {
         shapeRenderer.setProjectionMatrix(camera.projection);
         shapeRenderer.setTransformMatrix(camera.view);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        //player.drawDebug(shapeRenderer);
-        //obstacle.drawDebug(shapeRenderer);
+
         drawDebug();
         shapeRenderer.end();
 
         update(delta);
     }
 
-    public void update(float delta) {
+    private void update(float delta) {
         player.update();
         if (Gdx.input.isTouched())
             player.flyUp();
         blockPlayerLeavingTheWorld();
 
         updateObstacles(delta);
+        updateBullets(delta);
+
+        if (checkForCollision()) {
+            restart();
+        }
     }
 
     private void blockPlayerLeavingTheWorld() {
@@ -91,6 +97,12 @@ public class GameScreen extends ScreenAdapter {
         obstacles.add(obstacle);
     }
 
+    private void createNewBullet() {
+        Bullet bullet = new Bullet();
+        bullet.setPosition(player.getX(), player.getY());
+        bullets.add(bullet);
+    }
+
     private void checkIfNewObstacleIsNeeded() {
         if (obstacles.isEmpty()) {
             createNewObstacle();
@@ -98,6 +110,17 @@ public class GameScreen extends ScreenAdapter {
             Obstacle obstacle = obstacles.peek();
             if (obstacle.getX() < WORLD_WIDTH - GAP_BETWEEN_OBSTACLES) {
                 createNewObstacle();
+            }
+        }
+    }
+
+    private void checkIfNewBulletIsNeeded() {
+        if (bullets.isEmpty()) {
+            createNewBullet();
+        } else {
+            Bullet bullet = bullets.peek();
+            if (bullet.getX() > WORLD_WIDTH) {
+                createNewBullet();
             }
         }
     }
@@ -111,6 +134,14 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
+    private void removeOffScreenBullets() {
+        if (bullets.isEmpty()) {
+            Bullet firstBullet = bullets.peek();
+            if (firstBullet.getX() > WORLD_WIDTH)
+                bullets.removeValue(firstBullet, true);
+        }
+    }
+
     private void updateObstacles(float delta) {
         for (Obstacle obstacle : obstacles) {
             obstacle.update(delta);
@@ -119,12 +150,37 @@ public class GameScreen extends ScreenAdapter {
         removeOffScreenObstacles();
     }
 
+    private void updateBullets(float delta) {
+        for (Bullet bullet : bullets) {
+            bullet.update(delta);
+        }
+        checkIfNewBulletIsNeeded();
+        removeOffScreenBullets();
+    }
+
     private void drawDebug() {
         player.drawDebug(shapeRenderer);
+        for (Bullet bullet : bullets) {
+            bullet.drawDebug(shapeRenderer);
+        }
 
         for (Obstacle obstacle : obstacles) {
             obstacle.drawDebug(shapeRenderer);
         }
     }
 
+    private boolean checkForCollision() {
+        for (Obstacle obstacle : obstacles) {
+            if (obstacle.isPlayerColliding(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void restart() {
+        player.setPosition(WORLD_WIDTH/4, WORLD_HEIGHT/2);
+        obstacles.clear();
+        score = 0;
+    }
 }
