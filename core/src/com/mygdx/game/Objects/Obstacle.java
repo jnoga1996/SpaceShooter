@@ -47,4 +47,8 @@ public class Obstacle {
         Circle playerCollisionCircle = player.getCollisionCircle();
         return Intersector.overlaps(playerCollisionCircle, collisionCircle);
     }
+
+    public Circle getCollisionCircle() {
+        return collisionCircle;
+    }
 }

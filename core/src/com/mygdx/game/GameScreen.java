@@ -78,6 +78,9 @@ public class GameScreen extends ScreenAdapter {
         if (checkForCollision()) {
             restart();
         }
+
+        checkForBulletCollisionWithObstacle();
+
     }
 
     private void blockPlayerLeavingTheWorld() {
@@ -176,6 +179,17 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         return false;
+    }
+
+    private void checkForBulletCollisionWithObstacle() {
+        for (Bullet bullet : bullets) {
+            for (Obstacle obstacle : obstacles) {
+                if (bullet.isObstacleColliding(obstacle)) {
+                    obstacles.removeValue(obstacle, true);
+                    bullets.removeValue(bullet, true);
+                }
+            }
+        }
     }
 
     private void restart() {
