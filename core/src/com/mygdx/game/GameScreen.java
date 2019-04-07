@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -26,6 +28,8 @@ public class GameScreen extends ScreenAdapter {
     private Viewport viewport;
     private Camera camera;
     private SpriteBatch batch;
+    private BitmapFont bitmapFont;
+    private GlyphLayout glyphLayout;
 
     private Player player = new Player();
     private Array<Obstacle> obstacles = new Array<Obstacle>();
@@ -45,7 +49,8 @@ public class GameScreen extends ScreenAdapter {
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
         player.setPosition(WORLD_WIDTH/4, WORLD_HEIGHT/4);
-        //bullet.setPosition(player.getX(), player.getY());
+        bitmapFont = new BitmapFont();
+        glyphLayout = new GlyphLayout();
     }
 
     @Override
@@ -54,6 +59,7 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.projection);
         batch.setTransformMatrix(camera.view);
         batch.begin();
+        drawScore();
         batch.end();
 
         shapeRenderer.setProjectionMatrix(camera.projection);
@@ -187,6 +193,7 @@ public class GameScreen extends ScreenAdapter {
                 if (bullet.isObstacleColliding(obstacle)) {
                     obstacles.removeValue(obstacle, true);
                     bullets.removeValue(bullet, true);
+                    score += 10;
                 }
             }
         }
@@ -196,5 +203,11 @@ public class GameScreen extends ScreenAdapter {
         player.setPosition(WORLD_WIDTH/4, WORLD_HEIGHT/2);
         obstacles.clear();
         score = 0;
+    }
+
+    private void drawScore() {
+        String scoreString = Integer.toString(score);
+        glyphLayout.setText(bitmapFont, scoreString);
+        bitmapFont.draw(batch, scoreString, 50, 50);
     }
 }
