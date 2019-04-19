@@ -1,14 +1,12 @@
 package com.mygdx.game.Objects.Utils;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Objects.Abstract.GameObject;
 import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Obstacle;
-import com.mygdx.game.Objects.Player;
 
 public class BulletUtill {
-    private Array<Bullet> bullets = new Array<Bullet>();
+    private Array<Bullet> bullets;
     private GameObject object;
     private float worldWidth;
 
