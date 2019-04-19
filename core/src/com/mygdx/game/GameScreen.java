@@ -19,6 +19,7 @@ import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
+import com.mygdx.game.Objects.Utils.BulletUtill;
 
 import java.util.Random;
 
@@ -41,6 +42,9 @@ public class GameScreen extends ScreenAdapter {
     private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Enemy> enemies = new Array<Enemy>(MAX_NUMBER_OF_ENEMIES);
     private Array<Bullet> enemyBullets = new Array<Bullet>();
+
+    private BulletUtill bulletUtill = new BulletUtill(bullets, player, WORLD_WIDTH);
+    private BulletUtill enemyBulletUtill = new BulletUtill(bullets, player, WORLD_WIDTH);
 
     @Override
     public void resize(int width, int height) {
@@ -89,15 +93,15 @@ public class GameScreen extends ScreenAdapter {
         updateObstacles(delta);
         updateEnemies(delta);
 
-        updateBullets(delta, bullets);
-        updateBullets(delta, enemyBullets);
+        bulletUtill.updateBullets(delta);
+        enemyBulletUtill.updateBullets(delta);
 
         if (checkForCollision()) {
             restart();
         }
 
         checkIfPlayerWasHit();
-        checkForBulletCollisionWithObstacle();
+        bulletUtill.checkForBulletCollisionWithObstacle(obstacles, score);
 
     }
 
@@ -139,12 +143,6 @@ public class GameScreen extends ScreenAdapter {
         obstacles.add(obstacle);
     }
 
-    private void createNewBullet() {
-        Bullet bullet = new Bullet();
-        bullet.setPosition(player.getX(), player.getY());
-        bullets.add(bullet);
-    }
-
     private void createNewEnemy(int enemiesToCreate) {
         for (int i = 0; i < enemiesToCreate; i++) {
             Enemy enemy = new Enemy();
@@ -177,17 +175,6 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    private void checkIfNewBulletIsNeeded() {
-        if (bullets.isEmpty()) {
-            createNewBullet();
-        } else {
-            Bullet bullet = bullets.peek();
-            if (bullet.getX() > WORLD_WIDTH) {
-                createNewBullet();
-            }
-        }
-    }
-
     private void removeOffScreenObstacles() {
         if (!obstacles.isEmpty()) {
             Obstacle firstObstacle = obstacles.peek();
@@ -197,28 +184,12 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    private void removeOffScreenBullets() {
-        if (bullets.isEmpty()) {
-            Bullet firstBullet = bullets.peek();
-            if (firstBullet.getX() > WORLD_WIDTH)
-                bullets.removeValue(firstBullet, true);
-        }
-    }
-
     private void updateObstacles(float delta) {
         for (Obstacle obstacle : obstacles) {
             obstacle.update(delta);
         }
         checkIfNewObstacleIsNeeded();
         removeOffScreenObstacles();
-    }
-
-    private void updateBullets(float delta, Array<Bullet> bullets) {
-        for (Bullet bullet : bullets) {
-            bullet.update(delta);
-        }
-        checkIfNewBulletIsNeeded();
-        removeOffScreenBullets();
     }
 
     private void drawDebug() {
@@ -243,18 +214,6 @@ public class GameScreen extends ScreenAdapter {
             }
         }
         return false;
-    }
-
-    private void checkForBulletCollisionWithObstacle() {
-        for (Bullet bullet : bullets) {
-            for (Obstacle obstacle : obstacles) {
-                if (bullet.isObstacleColliding(obstacle)) {
-                    obstacles.removeValue(obstacle, true);
-                    bullets.removeValue(bullet, true);
-                    score += 10;
-                }
-            }
-        }
     }
 
     private void restart() {
