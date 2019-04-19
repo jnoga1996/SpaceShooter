@@ -1,9 +1,13 @@
 package com.mygdx.game.Objects;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.mygdx.game.Objects.Abstract.GameObject;
 
-public class Player {
+public class Player extends GameObject {
 
     private static final float COLLISION_RADIUS = 24f;
     private final Circle collisionCircle;
@@ -12,24 +16,6 @@ public class Player {
         return collisionCircle;
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
-    }
-
-    private float x = 0;
-    private float y = 0;
     private static final float DIVE_ACCEL = 0.30F;
     private static final float FLY_ACCEL = 5F;
     private float ySpeed = 0;
@@ -38,6 +24,7 @@ public class Player {
         collisionCircle = new Circle(x,y, COLLISION_RADIUS);
     }
 
+    @Override
     public void drawDebug(ShapeRenderer shapeRenderer) {
         shapeRenderer.circle(collisionCircle.x, collisionCircle.y,
                 collisionCircle.radius);

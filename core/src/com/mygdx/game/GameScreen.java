@@ -12,17 +12,22 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Objects.Bullet;
+import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
+
+import java.util.Random;
 
 public class GameScreen extends ScreenAdapter {
     private static final float WORLD_WIDTH = 640;
     private static final float WORLD_HEIGHT = 480;
     private static final float GAP_BETWEEN_OBSTACLES = 600F;
     private int score = 0;
+    private static final int MAX_NUMBER_OF_ENEMIES = 3;
 
     private ShapeRenderer shapeRenderer;
     private Viewport viewport;
@@ -34,6 +39,8 @@ public class GameScreen extends ScreenAdapter {
     private Player player = new Player();
     private Array<Obstacle> obstacles = new Array<Obstacle>();
     private Array<Bullet> bullets = new Array<Bullet>();
+    private Array<Enemy> enemies = new Array<Enemy>(MAX_NUMBER_OF_ENEMIES);
+    private Array<Bullet> enemyBullets = new Array<Bullet>();
 
     @Override
     public void resize(int width, int height) {
@@ -51,6 +58,7 @@ public class GameScreen extends ScreenAdapter {
         player.setPosition(WORLD_WIDTH/4, WORLD_HEIGHT/4);
         bitmapFont = new BitmapFont();
         glyphLayout = new GlyphLayout();
+
     }
 
     @Override
@@ -79,14 +87,39 @@ public class GameScreen extends ScreenAdapter {
         blockPlayerLeavingTheWorld();
 
         updateObstacles(delta);
-        updateBullets(delta);
+        updateEnemies(delta);
+
+        updateBullets(delta, bullets);
+        updateBullets(delta, enemyBullets);
 
         if (checkForCollision()) {
             restart();
         }
 
+        checkIfPlayerWasHit();
         checkForBulletCollisionWithObstacle();
 
+    }
+
+    private boolean checkIfPlayerWasHit() {
+        return false;
+    }
+
+    private void updateEnemies(float delta) {
+        for (Enemy enemy : enemies) {
+            enemy.update(delta);
+        }
+        checkIfNewEnemyIsNeeded();
+        removeOffScreenEnemies();
+    }
+
+    private void removeOffScreenEnemies() {
+        if (!enemies.isEmpty()) {
+            Enemy firstEnemy = enemies.peek();
+            if (firstEnemy.getX() < -Enemy.WIDTH) {
+                enemies.removeValue(firstEnemy, true);
+            }
+        }
     }
 
     private void blockPlayerLeavingTheWorld() {
@@ -112,14 +145,35 @@ public class GameScreen extends ScreenAdapter {
         bullets.add(bullet);
     }
 
+    private void createNewEnemy(int enemiesToCreate) {
+        for (int i = 0; i < enemiesToCreate; i++) {
+            Enemy enemy = new Enemy();
+            enemy.setPosition(WORLD_WIDTH + Enemy.WIDTH);
+            enemies.add(enemy);
+        }
+    }
+
     private void checkIfNewObstacleIsNeeded() {
         if (obstacles.isEmpty()) {
             createNewObstacle();
         } else {
             Obstacle obstacle = obstacles.peek();
-            if (obstacle.getX() < WORLD_WIDTH - GAP_BETWEEN_OBSTACLES) {
+            if (obstacle.getX() < WORLD_WIDTH) {
                 createNewObstacle();
             }
+        }
+    }
+
+    private void checkIfNewEnemyIsNeeded() {
+        if (enemies.isEmpty()) {
+            createNewEnemy(1);
+        } else {
+            Enemy enemy = enemies.peek();
+            if (enemy.getX() < WORLD_WIDTH && enemies.size < MAX_NUMBER_OF_ENEMIES) {
+                Random rand = new Random();
+                createNewEnemy(rand.nextInt(MAX_NUMBER_OF_ENEMIES));
+            }
+
         }
     }
 
@@ -159,7 +213,7 @@ public class GameScreen extends ScreenAdapter {
         removeOffScreenObstacles();
     }
 
-    private void updateBullets(float delta) {
+    private void updateBullets(float delta, Array<Bullet> bullets) {
         for (Bullet bullet : bullets) {
             bullet.update(delta);
         }
@@ -175,6 +229,10 @@ public class GameScreen extends ScreenAdapter {
 
         for (Obstacle obstacle : obstacles) {
             obstacle.drawDebug(shapeRenderer);
+        }
+
+        for (Enemy enemy : enemies) {
+            enemy.drawDebug(shapeRenderer);
         }
     }
 
