@@ -37,4 +37,9 @@ public class Bullet extends GameObject {
         Circle obstacleCollisionCircle = obstacle.getCollisionCircle();
         return Intersector.overlaps(obstacleCollisionCircle, collisionCircle);
     }
+
+    public boolean isObjectColliding(GameObject object) {
+        Circle obstacleCollisionCircle = object.getCollisionCircle();
+        return Intersector.overlaps(obstacleCollisionCircle, collisionCircle);
+    }
 }

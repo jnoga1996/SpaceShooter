@@ -1,11 +1,9 @@
 package com.mygdx.game.Objects;
 
-import com.mygdx.game.Objects.Abstract.GameObject;
-
 public class EnemyBullet extends Bullet {
-    private final static float MAX_SPEED = -450f;
+    private final static float MAX_SPEED = -300f;
 
-    public EnemyBullet(GameObject owner) {
+    public EnemyBullet() {
         super();
     }
 

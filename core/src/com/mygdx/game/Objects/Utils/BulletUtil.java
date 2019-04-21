@@ -3,6 +3,7 @@ package com.mygdx.game.Objects.Utils;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Objects.Abstract.GameObject;
 import com.mygdx.game.Objects.Bullet;
+import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.Obstacle;
 
 public class BulletUtil {
@@ -54,6 +55,17 @@ public class BulletUtil {
                     obstacles.removeValue(obstacle, true);
                     bullets.removeValue(bullet, true);
                     score += 10;
+                }
+            }
+        }
+    }
+
+    public void checkForCollisonWithEnemy(Array<Enemy> enemies) {
+        for (Bullet bullet : bullets) {
+            for (Enemy enemy : enemies) {
+                if (bullet.isObjectColliding(enemy)) {
+                    enemies.removeValue(enemy, true);
+                    bullets.removeValue(bullet, true);
                 }
             }
         }

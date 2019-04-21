@@ -39,7 +39,7 @@ public class GameScreen extends ScreenAdapter {
     private GlyphLayout glyphLayout;
 
     private Player player = new Player();
-    private Array<Obstacle> obstacles = new Array<Obstacle>();
+    private Array<Obstacle> obstacles = new Array<Obstacle>(3);
     private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Enemy> enemies = new Array<Enemy>(MAX_NUMBER_OF_ENEMIES);
     private Array<EnemyBullet> enemyBullets = new Array<EnemyBullet>(MAX_NUMBER_OF_ENEMIES);
@@ -109,6 +109,7 @@ public class GameScreen extends ScreenAdapter {
 
         checkIfPlayerWasHit();
         bulletUtil.checkForBulletCollisionWithObstacle(obstacles, score);
+        bulletUtil.checkForCollisonWithEnemy(enemies);
 
     }
 

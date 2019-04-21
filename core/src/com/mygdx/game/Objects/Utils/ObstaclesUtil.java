@@ -4,16 +4,19 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
 
+import java.util.Random;
+
 public class ObstaclesUtil {
     private Array<Obstacle> obstacles;
     private final float WORLD_WIDTH;
+    private static final int MAX_NUMBER_OF_OBSTACLES = 3;
 
     public ObstaclesUtil(Array<Obstacle> obstacles, float worldWidth) {
         this.obstacles = obstacles;
         this.WORLD_WIDTH = worldWidth;
     }
 
-    public void createNewObstacle() {
+    public void createNewObstacle(int numberOfObstacle) {
         Obstacle obstacle = new Obstacle();
         obstacle.setPosition(WORLD_WIDTH + Obstacle.WIDTH);
         obstacles.add(obstacle);
@@ -21,11 +24,12 @@ public class ObstaclesUtil {
 
     public void checkIfNewObstacleIsNeeded() {
         if (obstacles.isEmpty()) {
-            createNewObstacle();
+            createNewObstacle(1);
         } else {
             Obstacle obstacle = obstacles.peek();
-            if (obstacle.getX() < WORLD_WIDTH) {
-                createNewObstacle();
+            if (obstacle.getX() < WORLD_WIDTH && obstacles.size <= MAX_NUMBER_OF_OBSTACLES) {
+                Random rand = new Random();
+                createNewObstacle(rand.nextInt(MAX_NUMBER_OF_OBSTACLES));
             }
         }
     }

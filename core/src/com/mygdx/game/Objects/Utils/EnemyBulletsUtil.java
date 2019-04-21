@@ -2,9 +2,7 @@ package com.mygdx.game.Objects.Utils;
 
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Objects.Abstract.GameObject;
-import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.EnemyBullet;
-import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
 
 public class EnemyBulletsUtil{
@@ -17,7 +15,7 @@ public class EnemyBulletsUtil{
     }
 
     public void createNewBullet(GameObject object) {
-        EnemyBullet bullet = new EnemyBullet(object);
+        EnemyBullet bullet = new EnemyBullet();
         bullet.setPosition(object.getX(), object.getY());
         bullets.add(bullet);
     }
