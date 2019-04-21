@@ -15,8 +15,6 @@ public class Obstacle extends GameObject {
     private static final float HEIGHT_OFFSET = 400F;
     public static final float WIDTH = 2 * COLLISION_CIRCLE_RADIUS;
 
-    //private final Circle collisionCircle;
-
     public Obstacle() {
         y = MathUtils.random(HEIGHT_OFFSET);
         this.collisionCircle = new Circle(x, y, COLLISION_CIRCLE_RADIUS);

@@ -3,33 +3,14 @@ package com.mygdx.game.Objects;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
+import com.mygdx.game.Objects.Abstract.GameObject;
 
-public class Bullet {
-    private static final float MAX_SPEED = 600f;
+public class Bullet extends GameObject {
+    private static float MAX_SPEED = 450f;
     private static final float COLLISION_RADIUS = 7f;
-
-    private float x;
-    private float y;
-    private final Circle collisionCircle;
 
     public Bullet() {
         collisionCircle = new Circle(x, y, COLLISION_RADIUS);
-    }
-
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
     }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {

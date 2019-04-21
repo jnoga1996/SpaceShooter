@@ -10,11 +10,6 @@ import com.mygdx.game.Objects.Abstract.GameObject;
 public class Player extends GameObject {
 
     private static final float COLLISION_RADIUS = 24f;
-    private final Circle collisionCircle;
-
-    public Circle getCollisionCircle() {
-        return collisionCircle;
-    }
 
     private static final float DIVE_ACCEL = 0.30F;
     private static final float FLY_ACCEL = 5F;

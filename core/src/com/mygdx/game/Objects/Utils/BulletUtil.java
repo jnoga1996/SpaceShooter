@@ -5,39 +5,37 @@ import com.mygdx.game.Objects.Abstract.GameObject;
 import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Obstacle;
 
-public class BulletUtill {
-    private Array<Bullet> bullets;
-    private GameObject object;
-    private float worldWidth;
+public class BulletUtil {
+    protected Array<Bullet> bullets;
+    protected float worldWidth;
 
-    public BulletUtill(Array<Bullet> bullets, GameObject object, float worldWidth) {
+    public BulletUtil(Array<Bullet> bullets, float worldWidth) {
         this.bullets = bullets;
-        this.object = object;
         this.worldWidth = worldWidth;
     }
 
-    public void createNewBullet() {
+    public void createNewBullet(GameObject object) {
         Bullet bullet = new Bullet();
         bullet.setPosition(object.getX(), object.getY());
         bullets.add(bullet);
     }
 
-    public void checkIfNewBulletIsNeeded() {
+    public void checkIfNewBulletIsNeeded(GameObject object) {
         if (bullets.isEmpty()) {
-            createNewBullet();
+            createNewBullet(object);
         } else {
             Bullet bullet = bullets.peek();
             if (bullet.getX() > worldWidth) {
-                createNewBullet();
+                createNewBullet(object);
             }
         }
     }
 
-    public void updateBullets(float delta) {
+    public void updateBullets(float delta, GameObject object) {
         for (Bullet bullet : bullets) {
             bullet.update(delta);
         }
-        checkIfNewBulletIsNeeded();
+        checkIfNewBulletIsNeeded(object);
         removeOffScreenBullets();
     }
 

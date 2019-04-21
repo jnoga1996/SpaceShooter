@@ -4,11 +4,11 @@ import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
 
-public class ObstaclesUtill {
+public class ObstaclesUtil {
     private Array<Obstacle> obstacles;
     private final float WORLD_WIDTH;
 
-    public ObstaclesUtill(Array<Obstacle> obstacles, float worldWidth) {
+    public ObstaclesUtil(Array<Obstacle> obstacles, float worldWidth) {
         this.obstacles = obstacles;
         this.WORLD_WIDTH = worldWidth;
     }

@@ -12,17 +12,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Enemy;
+import com.mygdx.game.Objects.EnemyBullet;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
-import com.mygdx.game.Objects.Utils.BulletUtill;
-import com.mygdx.game.Objects.Utils.ObstaclesUtill;
-
-import java.util.Random;
+import com.mygdx.game.Objects.Utils.BulletUtil;
+import com.mygdx.game.Objects.Utils.EnemiesUtil;
+import com.mygdx.game.Objects.Utils.EnemyBulletsUtil;
+import com.mygdx.game.Objects.Utils.ObstaclesUtil;
 
 public class GameScreen extends ScreenAdapter {
     private static final float WORLD_WIDTH = 640;
@@ -42,11 +42,12 @@ public class GameScreen extends ScreenAdapter {
     private Array<Obstacle> obstacles = new Array<Obstacle>();
     private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Enemy> enemies = new Array<Enemy>(MAX_NUMBER_OF_ENEMIES);
-    private Array<Bullet> enemyBullets = new Array<Bullet>();
+    private Array<EnemyBullet> enemyBullets = new Array<EnemyBullet>(MAX_NUMBER_OF_ENEMIES);
 
-    private BulletUtill bulletUtill = new BulletUtill(bullets, player, WORLD_WIDTH);
-    private BulletUtill enemyBulletUtill = new BulletUtill(bullets, player, WORLD_WIDTH);
-    private ObstaclesUtill obstaclesUtill = new ObstaclesUtill(obstacles, WORLD_WIDTH);
+    private BulletUtil bulletUtil = new BulletUtil(bullets, WORLD_WIDTH);
+    private ObstaclesUtil obstaclesUtill = new ObstaclesUtil(obstacles, WORLD_WIDTH);
+    private EnemiesUtil enemiesUtill = new EnemiesUtil(enemies, WORLD_WIDTH, MAX_NUMBER_OF_ENEMIES);
+    private EnemyBulletsUtil enemyBulletsUtil = new EnemyBulletsUtil(enemyBullets, player);
 
     @Override
     public void resize(int width, int height) {
@@ -93,39 +94,26 @@ public class GameScreen extends ScreenAdapter {
         blockPlayerLeavingTheWorld();
 
         obstaclesUtill.updateObstacles(delta);
-        updateEnemies(delta);
+        enemiesUtill.updateEnemies(delta);
 
-        bulletUtill.updateBullets(delta);
-        enemyBulletUtill.updateBullets(delta);
+        for (Enemy enemy : enemies) {
+            enemyBulletsUtil.updateBullets(delta, enemy);
+        }
+
+        bulletUtil.updateBullets(delta, player);
+
 
         if (obstaclesUtill.checkForCollision(player)) {
             restart();
         }
 
         checkIfPlayerWasHit();
-        bulletUtill.checkForBulletCollisionWithObstacle(obstacles, score);
+        bulletUtil.checkForBulletCollisionWithObstacle(obstacles, score);
 
     }
 
     private boolean checkIfPlayerWasHit() {
         return false;
-    }
-
-    private void updateEnemies(float delta) {
-        for (Enemy enemy : enemies) {
-            enemy.update(delta);
-        }
-        checkIfNewEnemyIsNeeded();
-        removeOffScreenEnemies();
-    }
-
-    private void removeOffScreenEnemies() {
-        if (!enemies.isEmpty()) {
-            Enemy firstEnemy = enemies.peek();
-            if (firstEnemy.getX() < -Enemy.WIDTH) {
-                enemies.removeValue(firstEnemy, true);
-            }
-        }
     }
 
     private void blockPlayerLeavingTheWorld() {
@@ -137,28 +125,6 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(Color.BLACK.r, Color.BLACK.g,
                 Color.BLACK.b, Color.BLACK.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    }
-
-
-    private void createNewEnemy(int enemiesToCreate) {
-        for (int i = 0; i < enemiesToCreate; i++) {
-            Enemy enemy = new Enemy();
-            enemy.setPosition(WORLD_WIDTH + Enemy.WIDTH);
-            enemies.add(enemy);
-        }
-    }
-
-    private void checkIfNewEnemyIsNeeded() {
-        if (enemies.isEmpty()) {
-            createNewEnemy(1);
-        } else {
-            Enemy enemy = enemies.peek();
-            if (enemy.getX() < WORLD_WIDTH && enemies.size < MAX_NUMBER_OF_ENEMIES) {
-                Random rand = new Random();
-                createNewEnemy(rand.nextInt(MAX_NUMBER_OF_ENEMIES));
-            }
-
-        }
     }
 
     private void drawDebug() {
@@ -173,6 +139,10 @@ public class GameScreen extends ScreenAdapter {
 
         for (Enemy enemy : enemies) {
             enemy.drawDebug(shapeRenderer);
+        }
+
+        for (Bullet bullet: enemyBullets) {
+            bullet.drawDebug(shapeRenderer);
         }
     }
 
