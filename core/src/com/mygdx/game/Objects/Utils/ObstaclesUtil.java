@@ -54,6 +54,7 @@ public class ObstaclesUtil {
     public boolean checkForCollision(Player player) {
         for (Obstacle obstacle : obstacles) {
             if (obstacle.isPlayerColliding(player)) {
+                obstacles.removeValue(obstacle, true);
                 return true;
             }
         }

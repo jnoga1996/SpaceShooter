@@ -14,8 +14,10 @@ public class Player extends GameObject {
     private static final float DIVE_ACCEL = 0.30F;
     private static final float FLY_ACCEL = 5F;
     private float ySpeed = 0;
+    private int hp;
 
     public Player() {
+        replenishHp();
         collisionCircle = new Circle(x,y, COLLISION_RADIUS);
     }
 
@@ -44,5 +46,17 @@ public class Player extends GameObject {
     public void flyUp() {
         ySpeed = FLY_ACCEL;
         setPosition(x, y + ySpeed);
+    }
+
+    public void takeDamage() {
+        hp -= 10;
+    }
+
+    public void replenishHp() {
+        hp = 100;
+    }
+
+    public int getHp() {
+        return hp;
     }
 }

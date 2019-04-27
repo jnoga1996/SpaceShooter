@@ -5,10 +5,13 @@ import com.mygdx.game.Objects.Abstract.GameObject;
 import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.Obstacle;
+import com.mygdx.game.Objects.Score;
 
 public class BulletUtil {
     protected Array<Bullet> bullets;
     protected float worldWidth;
+    private final static int POINTS_FOR_OBSTACLE = 25;
+    private final static int POINTS_FOR_ENEMY = 25;
 
     public BulletUtil(Array<Bullet> bullets, float worldWidth) {
         this.bullets = bullets;
@@ -48,24 +51,25 @@ public class BulletUtil {
         }
     }
 
-    public void checkForBulletCollisionWithObstacle(Array<Obstacle> obstacles, float score) {
+    public void checkForBulletCollisionWithObstacle(Array<Obstacle> obstacles, Score score) {
         for (Bullet bullet : bullets) {
             for (Obstacle obstacle : obstacles) {
                 if (bullet.isObstacleColliding(obstacle)) {
                     obstacles.removeValue(obstacle, true);
                     bullets.removeValue(bullet, true);
-                    score += 10;
+                    score.increaseScore(POINTS_FOR_OBSTACLE);
                 }
             }
         }
     }
 
-    public void checkForCollisonWithEnemy(Array<Enemy> enemies) {
+    public void checkForCollisonWithEnemy(Array<Enemy> enemies, Score score) {
         for (Bullet bullet : bullets) {
             for (Enemy enemy : enemies) {
                 if (bullet.isObjectColliding(enemy)) {
                     enemies.removeValue(enemy, true);
                     bullets.removeValue(bullet, true);
+                    score.increaseScore(POINTS_FOR_ENEMY);
                 }
             }
         }

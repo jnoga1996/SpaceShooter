@@ -2,6 +2,8 @@ package com.mygdx.game.Objects.Utils;
 
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Objects.Abstract.GameObject;
+import com.mygdx.game.Objects.Bullet;
+import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.EnemyBullet;
 import com.mygdx.game.Objects.Player;
 
@@ -45,6 +47,15 @@ public class EnemyBulletsUtil{
             EnemyBullet firstBullet = bullets.peek();
             if (firstBullet.getX() < 0)
                 bullets.removeValue(firstBullet, true);
+        }
+    }
+
+    public void checkForCollisonWithPlayer(Player player) {
+        for (EnemyBullet bullet : bullets) {
+            if (bullet.isObjectColliding(player)) {
+                bullets.removeValue(bullet, true);
+                player.takeDamage();
+            }
         }
     }
 }

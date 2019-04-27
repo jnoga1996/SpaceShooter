@@ -19,6 +19,7 @@ import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.EnemyBullet;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
+import com.mygdx.game.Objects.Score;
 import com.mygdx.game.Objects.Utils.BulletUtil;
 import com.mygdx.game.Objects.Utils.EnemiesUtil;
 import com.mygdx.game.Objects.Utils.EnemyBulletsUtil;
@@ -28,7 +29,6 @@ public class GameScreen extends ScreenAdapter {
     private static final float WORLD_WIDTH = 640;
     private static final float WORLD_HEIGHT = 480;
     private static final float GAP_BETWEEN_OBSTACLES = 600F;
-    private int score = 0;
     private static final int MAX_NUMBER_OF_ENEMIES = 3;
 
     private ShapeRenderer shapeRenderer;
@@ -48,6 +48,7 @@ public class GameScreen extends ScreenAdapter {
     private ObstaclesUtil obstaclesUtill = new ObstaclesUtil(obstacles, WORLD_WIDTH);
     private EnemiesUtil enemiesUtill = new EnemiesUtil(enemies, WORLD_WIDTH, MAX_NUMBER_OF_ENEMIES);
     private EnemyBulletsUtil enemyBulletsUtil = new EnemyBulletsUtil(enemyBullets, player);
+    private Score score = new Score();
 
     @Override
     public void resize(int width, int height) {
@@ -74,6 +75,7 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.projection);
         batch.setTransformMatrix(camera.view);
         batch.begin();
+        drawHp();
         drawScore();
         batch.end();
 
@@ -102,19 +104,19 @@ public class GameScreen extends ScreenAdapter {
 
         bulletUtil.updateBullets(delta, player);
 
-
         if (obstaclesUtill.checkForCollision(player)) {
+            player.takeDamage();
+        }
+
+        enemyBulletsUtil.checkForCollisonWithPlayer(player);
+
+        if (player.getHp() <= 0) {
             restart();
         }
 
-        checkIfPlayerWasHit();
         bulletUtil.checkForBulletCollisionWithObstacle(obstacles, score);
-        bulletUtil.checkForCollisonWithEnemy(enemies);
+        bulletUtil.checkForCollisonWithEnemy(enemies, score);
 
-    }
-
-    private boolean checkIfPlayerWasHit() {
-        return false;
     }
 
     private void blockPlayerLeavingTheWorld() {
@@ -150,12 +152,18 @@ public class GameScreen extends ScreenAdapter {
     private void restart() {
         player.setPosition(WORLD_WIDTH/4, WORLD_HEIGHT/2);
         obstacles.clear();
-        score = 0;
+        score.reset();
     }
 
     private void drawScore() {
-        String scoreString = Integer.toString(score);
+        String scoreString = Integer.toString(score.getScore());
         glyphLayout.setText(bitmapFont, scoreString);
         bitmapFont.draw(batch, scoreString, 50, 50);
+    }
+
+    private void drawHp() {
+        String hpString = Integer.toString(player.getHp());
+        glyphLayout.setText(bitmapFont, hpString);
+        bitmapFont.draw(batch, hpString, 100, 50);
     }
 }
