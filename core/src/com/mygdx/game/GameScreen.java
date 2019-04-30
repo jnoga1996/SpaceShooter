@@ -104,6 +104,8 @@ public class GameScreen extends ScreenAdapter {
 
         bulletUtil.updateBullets(delta, player);
 
+        enemiesUtill.checkForCollision(player);
+
         if (obstaclesUtill.checkForCollision(player)) {
             player.takeDamage();
         }
@@ -131,6 +133,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void drawDebug() {
+        shapeRenderer.rect(0,0,100, 20);
         player.drawDebug(shapeRenderer);
         for (Bullet bullet : bullets) {
             bullet.drawDebug(shapeRenderer);
@@ -152,6 +155,10 @@ public class GameScreen extends ScreenAdapter {
     private void restart() {
         player.setPosition(WORLD_WIDTH/4, WORLD_HEIGHT/2);
         obstacles.clear();
+        enemies.clear();
+        bullets.clear();
+        enemyBullets.clear();
+        player.replenishHp();
         score.reset();
     }
 

@@ -3,6 +3,7 @@ package com.mygdx.game.Objects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.Objects.Abstract.GameObject;
 
@@ -25,6 +26,11 @@ public class Enemy extends GameObject {
     private void updateCollisionCircle() {
         collisionCircle.setX(x);
         collisionCircle.setY(y);
+    }
+
+    public boolean isEnemyColliding(Player player) {
+        Circle playerCollisionCircle = player.getCollisionCircle();
+        return Intersector.overlaps(playerCollisionCircle, collisionCircle);
     }
 
     public void update(float delta) {

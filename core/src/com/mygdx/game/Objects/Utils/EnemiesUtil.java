@@ -2,6 +2,7 @@ package com.mygdx.game.Objects.Utils;
 
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.Objects.Enemy;
+import com.mygdx.game.Objects.Player;
 
 import java.util.Random;
 
@@ -50,6 +51,15 @@ public class EnemiesUtil {
             Enemy firstEnemy = enemies.peek();
             if (firstEnemy.getX() < -Enemy.WIDTH) {
                 enemies.removeValue(firstEnemy, true);
+            }
+        }
+    }
+
+    public void checkForCollision(Player player) {
+        for(Enemy enemy : enemies) {
+            if (enemy.isEnemyColliding(player)) {
+                enemies.removeValue(enemy, true);
+                player.takeDamage();
             }
         }
     }
