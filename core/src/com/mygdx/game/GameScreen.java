@@ -12,11 +12,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.EnemyBullet;
+import com.mygdx.game.Objects.GameClock;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
 import com.mygdx.game.Objects.Score;
@@ -50,6 +52,8 @@ public class GameScreen extends ScreenAdapter {
     private EnemyBulletsUtil enemyBulletsUtil = new EnemyBulletsUtil(enemyBullets, player);
     private Score score = new Score();
 
+    private GameClock timer = new GameClock();
+
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
@@ -77,6 +81,7 @@ public class GameScreen extends ScreenAdapter {
         batch.begin();
         drawHp();
         drawScore();
+        drawTimeLeft();
         batch.end();
 
         shapeRenderer.setProjectionMatrix(camera.projection);
@@ -119,6 +124,9 @@ public class GameScreen extends ScreenAdapter {
         bulletUtil.checkForBulletCollisionWithObstacle(obstacles, score);
         bulletUtil.checkForCollisonWithEnemy(enemies, score);
 
+        if (timer.levelCleared()) {
+            //changeLevel();
+        }
     }
 
     private void blockPlayerLeavingTheWorld() {
@@ -172,5 +180,11 @@ public class GameScreen extends ScreenAdapter {
         String hpString = Integer.toString(player.getHp());
         glyphLayout.setText(bitmapFont, hpString);
         bitmapFont.draw(batch, hpString, 100, 50);
+    }
+
+    private void drawTimeLeft() {
+        String timeLeftString = Long.toString(timer.getElpasedTimePercentage());
+        glyphLayout.setText(bitmapFont, timeLeftString);
+        bitmapFont.draw(batch, timeLeftString, 150, 50);
     }
 }
