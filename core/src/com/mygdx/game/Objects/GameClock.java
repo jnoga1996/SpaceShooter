@@ -1,24 +1,36 @@
 package com.mygdx.game.Objects;
 
-import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
 
 public class GameClock {
-    private static final long TIME_LIMIT = 900;
-    private long startTime;
+    private static final double TIME_LIMIT = 30.0;
+    private Timer timer;
+    private long elapsedTime = 0;
 
     public GameClock() {
-        this.startTime = TimeUtils.millis();
+        timer = new Timer();
+        timer.scheduleTask(new Timer.Task() {
+            @Override
+            public void run() {
+                incrementElapsedTime();
+            }
+        }, 0, 1);
+        timer.start();
+    }
+
+    private void incrementElapsedTime() {
+        elapsedTime++;
     }
 
     public boolean levelCleared() {
-        return getElpasedTime() > TIME_LIMIT;
+        return getElapsedTime() > TIME_LIMIT;
     }
 
-    public long getElpasedTime() {
-        return TimeUtils.millis() - startTime;
+    public long getElapsedTime() {
+        return elapsedTime;
     }
 
-    public int getElpasedTimePercentage() {
-        return (int)(getElpasedTime() / TIME_LIMIT);
+    public double getElapsedTimePercentage() {
+        return (getElapsedTime() / TIME_LIMIT) * 100;
     }
 }

@@ -63,7 +63,7 @@ public class BulletUtil {
         }
     }
 
-    public void checkForCollisonWithEnemy(Array<Enemy> enemies, Score score) {
+    public void checkForCollisionWithEnemy(Array<Enemy> enemies, Score score) {
         for (Bullet bullet : bullets) {
             for (Enemy enemy : enemies) {
                 if (bullet.isObjectColliding(enemy)) {

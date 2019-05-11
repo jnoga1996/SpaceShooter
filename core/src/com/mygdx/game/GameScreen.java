@@ -1,5 +1,6 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
@@ -12,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Objects.Bullet;
@@ -53,6 +53,11 @@ public class GameScreen extends ScreenAdapter {
     private Score score = new Score();
 
     private GameClock timer = new GameClock();
+
+    private final Game game;
+    public GameScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void resize(int width, int height) {
@@ -115,16 +120,18 @@ public class GameScreen extends ScreenAdapter {
             player.takeDamage();
         }
 
-        enemyBulletsUtil.checkForCollisonWithPlayer(player);
+        enemyBulletsUtil.checkForCollisionWithPlayer(player);
 
         if (player.getHp() <= 0) {
             restart();
         }
 
         bulletUtil.checkForBulletCollisionWithObstacle(obstacles, score);
-        bulletUtil.checkForCollisonWithEnemy(enemies, score);
+        bulletUtil.checkForCollisionWithEnemy(enemies, score);
 
         if (timer.levelCleared()) {
+            game.setScreen(new StartScreen(game));
+
             //changeLevel();
         }
     }
@@ -183,7 +190,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void drawTimeLeft() {
-        String timeLeftString = Long.toString(timer.getElpasedTimePercentage());
+        String timeLeftString = Long.toString((int)timer.getElapsedTimePercentage());
         glyphLayout.setText(bitmapFont, timeLeftString);
         bitmapFont.draw(batch, timeLeftString, 150, 50);
     }

@@ -10,6 +10,7 @@ import com.mygdx.game.Objects.Player;
 public class EnemyBulletsUtil{
     private Array<EnemyBullet> bullets;
     private Player player;
+    private static final int MAX_BULLETS = 3;
 
     public EnemyBulletsUtil(Array<EnemyBullet> bullets, Player player) {
         this.bullets = bullets;
@@ -23,7 +24,7 @@ public class EnemyBulletsUtil{
     }
 
     public void checkIfNewBulletIsNeeded(GameObject object) {
-        if (bullets.isEmpty()) {
+        if (bullets.isEmpty() || bullets.size < MAX_BULLETS) {
             createNewBullet(object);
         } else {
             EnemyBullet bullet = bullets.peek();
@@ -50,7 +51,7 @@ public class EnemyBulletsUtil{
         }
     }
 
-    public void checkForCollisonWithPlayer(Player player) {
+    public void checkForCollisionWithPlayer(Player player) {
         for (EnemyBullet bullet : bullets) {
             if (bullet.isObjectColliding(player)) {
                 bullets.removeValue(bullet, true);
