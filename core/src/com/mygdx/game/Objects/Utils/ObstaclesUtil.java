@@ -29,7 +29,7 @@ public class ObstaclesUtil {
             Obstacle obstacle = obstacles.peek();
             if (obstacle.getX() < WORLD_WIDTH && obstacles.size <= MAX_NUMBER_OF_OBSTACLES) {
                 Random rand = new Random();
-                createNewObstacle(rand.nextInt(MAX_NUMBER_OF_OBSTACLES));
+                createNewObstacle(1);
             }
         }
     }

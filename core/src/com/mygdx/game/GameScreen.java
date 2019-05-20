@@ -22,10 +22,13 @@ import com.mygdx.game.Objects.GameClock;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
 import com.mygdx.game.Objects.Score;
+import com.mygdx.game.Objects.Upgrade;
+import com.mygdx.game.Objects.UpgradeType;
 import com.mygdx.game.Objects.Utils.BulletUtil;
 import com.mygdx.game.Objects.Utils.EnemiesUtil;
 import com.mygdx.game.Objects.Utils.EnemyBulletsUtil;
 import com.mygdx.game.Objects.Utils.ObstaclesUtil;
+import com.mygdx.game.Objects.Utils.UpgradeUtil;
 
 public class GameScreen extends ScreenAdapter {
     private static final float WORLD_WIDTH = 640;
@@ -45,12 +48,15 @@ public class GameScreen extends ScreenAdapter {
     private Array<Bullet> bullets = new Array<Bullet>();
     private Array<Enemy> enemies = new Array<Enemy>(MAX_NUMBER_OF_ENEMIES);
     private Array<EnemyBullet> enemyBullets = new Array<EnemyBullet>(MAX_NUMBER_OF_ENEMIES);
+    private Array<Upgrade> upgrades = new Array<Upgrade>();
 
     private BulletUtil bulletUtil = new BulletUtil(bullets, WORLD_WIDTH);
     private ObstaclesUtil obstaclesUtill = new ObstaclesUtil(obstacles, WORLD_WIDTH);
     private EnemiesUtil enemiesUtill = new EnemiesUtil(enemies, WORLD_WIDTH, MAX_NUMBER_OF_ENEMIES);
     private EnemyBulletsUtil enemyBulletsUtil = new EnemyBulletsUtil(enemyBullets, player);
     private Score score = new Score();
+
+    private UpgradeUtil upgradeUtil = new UpgradeUtil(upgrades, WORLD_WIDTH);
 
     private GameClock timer = new GameClock();
 
@@ -104,6 +110,8 @@ public class GameScreen extends ScreenAdapter {
         if (Gdx.input.isTouched())
             player.flyUp();
         blockPlayerLeavingTheWorld();
+
+        upgradeUtil.updateUpgrades(delta);
 
         obstaclesUtill.updateObstacles(delta);
         enemiesUtill.updateEnemies(delta);
@@ -164,6 +172,10 @@ public class GameScreen extends ScreenAdapter {
 
         for (Bullet bullet: enemyBullets) {
             bullet.drawDebug(shapeRenderer);
+        }
+
+        for (Upgrade upgrade : upgrades) {
+            upgrade.drawDebug(shapeRenderer);
         }
     }
 

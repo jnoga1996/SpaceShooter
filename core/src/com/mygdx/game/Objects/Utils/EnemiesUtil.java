@@ -32,7 +32,7 @@ public class EnemiesUtil {
             Enemy enemy = enemies.peek();
             if (enemy.getX() < WORLD_WIDTH && enemies.size < MAX_NUMBER_OF_ENEMIES) {
                 Random rand = new Random();
-                createNewEnemy(rand.nextInt(MAX_NUMBER_OF_ENEMIES));
+                createNewEnemy(1);
             }
 
         }

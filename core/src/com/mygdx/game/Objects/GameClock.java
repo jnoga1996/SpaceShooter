@@ -23,7 +23,7 @@ public class GameClock {
     }
 
     public boolean levelCleared() {
-        return getElapsedTime() > TIME_LIMIT;
+        return getElapsedTime() >= TIME_LIMIT;
     }
 
     public long getElapsedTime() {
