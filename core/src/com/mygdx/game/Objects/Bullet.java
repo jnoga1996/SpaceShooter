@@ -6,7 +6,8 @@ import com.badlogic.gdx.math.Intersector;
 import com.mygdx.game.Objects.Abstract.GameObject;
 
 public class Bullet extends GameObject {
-    private static float MAX_SPEED = 450f;
+    public static float DEFAULT_SPEED = 450f;
+    private float maxSpeed = DEFAULT_SPEED;
     private static final float COLLISION_RADIUS = 7f;
 
     public Bullet() {
@@ -30,7 +31,7 @@ public class Bullet extends GameObject {
     }
 
     public void update(float delta) {
-        setPosition(x + MAX_SPEED*delta, y);
+        setPosition(x + maxSpeed *delta, y);
     }
 
     public boolean isObstacleColliding(Obstacle obstacle) {
@@ -41,5 +42,13 @@ public class Bullet extends GameObject {
     public boolean isObjectColliding(GameObject object) {
         Circle obstacleCollisionCircle = object.getCollisionCircle();
         return Intersector.overlaps(obstacleCollisionCircle, collisionCircle);
+    }
+
+    public void increaseMaxSpeed(float value) {
+        maxSpeed += value;
+    }
+
+    public void reset() {
+        maxSpeed = DEFAULT_SPEED;
     }
 }

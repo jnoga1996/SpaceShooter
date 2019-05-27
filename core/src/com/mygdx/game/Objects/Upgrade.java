@@ -1,16 +1,30 @@
 package com.mygdx.game.Objects;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
 import com.mygdx.game.Objects.Abstract.GameObject;
 
 public class Upgrade extends GameObject {
+    public UpgradeType getType() {
+        return type;
+    }
+
+    public void setType(UpgradeType type) {
+        this.type = type;
+    }
+
     private UpgradeType type;
     public static final float COLLISION_CIRCLE_RADIUS = 5f;
     private static final float HEIGHT_OFFSET = 400F;
     private static final float MAX_SPEED_PER_SECOND = 100F;
+    private TextureRegion sprite;
 
     public Upgrade(UpgradeType type) {
         super();
@@ -48,5 +62,17 @@ public class Upgrade extends GameObject {
         shapeRenderer.circle(collisionCircle.x, collisionCircle.y,
                 collisionCircle.radius);
         shapeRenderer.setColor(Color.WHITE);
+    }
+
+    public void draw(Batch batch) {
+        sprite = new TextureRegion(new Texture(Gdx.files.internal("s2.png")), 50, 50);
+        if (type == UpgradeType.LIFE) {
+            batch.draw(sprite, getX(), getY());
+        }
+    }
+
+    public boolean isPlayerColliding(Player player) {
+        Circle playerCollisionCircle = player.getCollisionCircle();
+        return Intersector.overlaps(playerCollisionCircle, collisionCircle);
     }
 }

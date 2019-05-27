@@ -33,4 +33,8 @@ public class GameClock {
     public double getElapsedTimePercentage() {
         return (getElapsedTime() / TIME_LIMIT) * 100;
     }
+
+    public void reset() {
+        elapsedTime = 0;
+    }
 }

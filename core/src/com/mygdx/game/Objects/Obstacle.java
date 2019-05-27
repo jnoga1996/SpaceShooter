@@ -1,6 +1,9 @@
 package com.mygdx.game.Objects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
@@ -14,10 +17,12 @@ public class Obstacle extends GameObject {
     private static final float COLLISION_CIRCLE_RADIUS = 33f;
     private static final float HEIGHT_OFFSET = 400F;
     public static final float WIDTH = 2 * COLLISION_CIRCLE_RADIUS;
+    private TextureRegion sprite;
 
     public Obstacle() {
         y = MathUtils.random(HEIGHT_OFFSET);
         this.collisionCircle = new Circle(x, y, COLLISION_CIRCLE_RADIUS);
+        sprite = new TextureRegion(new Texture("obstacle.png"));
     }
 
     public void setPosition(float x) {
@@ -36,6 +41,12 @@ public class Obstacle extends GameObject {
         shapeRenderer.circle(collisionCircle.x, collisionCircle.y,
                 collisionCircle.radius);
         shapeRenderer.setColor(Color.WHITE);
+    }
+
+    public void draw(Batch batch) {
+        batch.draw(sprite, x - COLLISION_CIRCLE_RADIUS, y - COLLISION_CIRCLE_RADIUS,
+                COLLISION_CIRCLE_RADIUS, COLLISION_CIRCLE_RADIUS, 2*COLLISION_CIRCLE_RADIUS, 2*COLLISION_CIRCLE_RADIUS,
+                1, 1, -90);
     }
 
     public void update(float delta) {

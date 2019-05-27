@@ -1,6 +1,7 @@
 package com.mygdx.game.Objects.Utils;
 
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.Objects.Player;
 import com.mygdx.game.Objects.Upgrade;
 import com.mygdx.game.Objects.UpgradeType;
 
@@ -8,13 +9,15 @@ import java.util.Random;
 
 public class UpgradeUtil {
     private Array<Upgrade> upgrades;
+    private BulletUtil bulletUtil;
     private float worldWidth;
     private int upgradesCounter = 0;
     final static int UPGRADES_LIMIT = 2;
 
-    public UpgradeUtil(Array<Upgrade> upgrades, float worldWidth) {
+    public UpgradeUtil(Array<Upgrade> upgrades, float worldWidth, BulletUtil bulletUtil) {
         this.upgrades = upgrades;
         this.worldWidth = worldWidth;
+        this.bulletUtil = bulletUtil;
     }
 
     public void createNewUpgrade() {
@@ -54,5 +57,25 @@ public class UpgradeUtil {
             }
         }
         upgradesCounter++;
+    }
+
+    public void checkForCollision(Player player) {
+        for(Upgrade upgrade : upgrades) {
+            if (upgrade.isPlayerColliding(player)) {
+                upgrades.removeValue(upgrade, true);
+                if (upgrade.getType() == UpgradeType.LIFE) {
+                    player.replenishHp();
+                } else if (upgrade.getType() == UpgradeType.MONEY) {
+
+                } else if (upgrade.getType() == UpgradeType.WEAPON_UPGRADE) {
+                    bulletUtil.applyUpgrade();
+                } else if (upgrade.getType() == UpgradeType.SHIELD) {
+                    player.increaseShield();
+                }
+
+
+                upgradesCounter--;
+            }
+        }
     }
 }

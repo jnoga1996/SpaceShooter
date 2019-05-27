@@ -16,6 +16,7 @@ public class BulletUtil {
     public BulletUtil(Array<Bullet> bullets, float worldWidth) {
         this.bullets = bullets;
         this.worldWidth = worldWidth;
+        resetUpgrades();
     }
 
     public void createNewBullet(GameObject object) {
@@ -72,6 +73,19 @@ public class BulletUtil {
                     score.increaseScore(POINTS_FOR_ENEMY);
                 }
             }
+        }
+    }
+
+    public void applyUpgrade() {
+        for (Bullet bullet : bullets) {
+            bullet.increaseMaxSpeed(100);
+        }
+        Bullet.DEFAULT_SPEED += 100;
+    }
+
+    public void resetUpgrades() {
+        for (Bullet bullet : bullets) {
+            bullet.reset();
         }
     }
 }

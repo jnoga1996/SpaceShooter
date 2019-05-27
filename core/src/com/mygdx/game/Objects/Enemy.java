@@ -1,6 +1,9 @@
 package com.mygdx.game.Objects;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
@@ -12,10 +15,12 @@ public class Enemy extends GameObject {
     public static final float WIDTH = 2 * COLLISION_CIRCLE_RADIUS;
     public static final float MAX_SPEED_PER_SECOND = 250f;
     private static final float HEIGHT_OFFSET = 400F;
+    private TextureRegion sprite;
 
     public Enemy() {
         y = MathUtils.random(HEIGHT_OFFSET);
         this.collisionCircle = new Circle(x, y, COLLISION_CIRCLE_RADIUS);
+        sprite = new TextureRegion(new Texture("enemy.png"), (int)COLLISION_CIRCLE_RADIUS*2, (int)COLLISION_CIRCLE_RADIUS*2);
     }
 
     public void setPosition(float x) {
@@ -45,5 +50,8 @@ public class Enemy extends GameObject {
         shapeRenderer.setColor(Color.WHITE);
     }
 
-
+    public void draw(Batch batch) {
+        batch.draw(sprite, x - COLLISION_CIRCLE_RADIUS, y - COLLISION_CIRCLE_RADIUS, COLLISION_CIRCLE_RADIUS, COLLISION_CIRCLE_RADIUS,
+                2*COLLISION_CIRCLE_RADIUS, 2*COLLISION_CIRCLE_RADIUS,1, 1, -90);
+    }
 }
