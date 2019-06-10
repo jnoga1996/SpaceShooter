@@ -3,7 +3,7 @@ package com.mygdx.game.Objects;
 import com.badlogic.gdx.utils.Timer;
 
 public class GameClock {
-    private static final double TIME_LIMIT = 30.0;
+    private static final double TIME_LIMIT = 60.0;
     private Timer timer;
     private long elapsedTime = 0;
 

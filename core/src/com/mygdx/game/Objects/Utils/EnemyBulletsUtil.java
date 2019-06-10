@@ -1,6 +1,7 @@
 package com.mygdx.game.Objects.Utils;
 
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.ExplosionUtil;
 import com.mygdx.game.Objects.Abstract.GameObject;
 import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Enemy;
@@ -11,10 +12,12 @@ public class EnemyBulletsUtil{
     private Array<EnemyBullet> bullets;
     private Player player;
     private static final int MAX_BULLETS = 3;
+    private ExplosionUtil explosionUtil;
 
-    public EnemyBulletsUtil(Array<EnemyBullet> bullets, Player player) {
+    public EnemyBulletsUtil(Array<EnemyBullet> bullets, Player player, ExplosionUtil explosionUtil) {
         this.bullets = bullets;
         this.player = player;
+        this.explosionUtil = explosionUtil;
     }
 
     public void createNewBullet(GameObject object) {
@@ -55,6 +58,7 @@ public class EnemyBulletsUtil{
         for (EnemyBullet bullet : bullets) {
             if (bullet.isObjectColliding(player)) {
                 bullets.removeValue(bullet, true);
+                explosionUtil.addExplosion(player.getX(), player.getY());
                 player.takeDamage();
             }
         }

@@ -10,26 +10,22 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Enemy;
 import com.mygdx.game.Objects.EnemyBullet;
+import com.mygdx.game.Objects.Explosion;
 import com.mygdx.game.Objects.GameClock;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
 import com.mygdx.game.Objects.Score;
 import com.mygdx.game.Objects.Upgrade;
-import com.mygdx.game.Objects.UpgradeType;
 import com.mygdx.game.Objects.Utils.BulletUtil;
 import com.mygdx.game.Objects.Utils.EnemiesUtil;
 import com.mygdx.game.Objects.Utils.EnemyBulletsUtil;
@@ -42,6 +38,7 @@ public class GameScreen extends ScreenAdapter {
     private static final int MAX_NUMBER_OF_ENEMIES = 3;
     private int menuOffset = 75;
     private int leftOffset = 50;
+    private int topOffset = 50;
 
     private ShapeRenderer shapeRenderer;
     private Viewport viewport;
@@ -56,17 +53,16 @@ public class GameScreen extends ScreenAdapter {
     private Array<Enemy> enemies = new Array<Enemy>(MAX_NUMBER_OF_ENEMIES);
     private Array<EnemyBullet> enemyBullets = new Array<EnemyBullet>(MAX_NUMBER_OF_ENEMIES);
     private Array<Upgrade> upgrades = new Array<Upgrade>();
+    private Array<Explosion> explosions = new Array<Explosion>();
 
-    private BulletUtil bulletUtil = new BulletUtil(bullets, WORLD_WIDTH);
-    private ObstaclesUtil obstaclesUtill = new ObstaclesUtil(obstacles, WORLD_WIDTH);
-    private EnemiesUtil enemiesUtill = new EnemiesUtil(enemies, WORLD_WIDTH, MAX_NUMBER_OF_ENEMIES);
-    private EnemyBulletsUtil enemyBulletsUtil = new EnemyBulletsUtil(enemyBullets, player);
-    private Score score = new Score();
-
+    private ExplosionUtil explosionUtil = new ExplosionUtil(explosions);
+    private BulletUtil bulletUtil = new BulletUtil(bullets, WORLD_WIDTH, explosionUtil);
+    private ObstaclesUtil obstaclesUtill = new ObstaclesUtil(obstacles, WORLD_WIDTH, explosionUtil);
+    private EnemiesUtil enemiesUtill = new EnemiesUtil(enemies, WORLD_WIDTH, MAX_NUMBER_OF_ENEMIES, explosionUtil);
+    private EnemyBulletsUtil enemyBulletsUtil = new EnemyBulletsUtil(enemyBullets, player, explosionUtil);
     private UpgradeUtil upgradeUtil = new UpgradeUtil(upgrades, WORLD_WIDTH, bulletUtil);
 
-    private GameClock timer = new GameClock();
-
+    private Score score = new Score();
     private final Game game;
     public GameScreen(Game game) {
         this.game = game;
@@ -81,6 +77,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
+        game.dispose();
         camera = new OrthographicCamera();
         camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
         camera.update();
@@ -103,21 +100,8 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(camera.projection);
         batch.setTransformMatrix(camera.view);
         batch.begin();
-        batch.draw(background, 0, 0);
-        drawHp();
-        drawScore();
-        drawTimeLeft();
-        drawShield();
         draw();
         batch.end();
-
-        shapeRenderer.setProjectionMatrix(camera.projection);
-        shapeRenderer.setTransformMatrix(camera.view);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-
-        drawDebug();
-        shapeRenderer.end();
-
         update(delta);
     }
 
@@ -146,18 +130,13 @@ public class GameScreen extends ScreenAdapter {
         enemyBulletsUtil.checkForCollisionWithPlayer(player);
 
         if (player.getHp() <= 0) {
+            game.setScreen(new GameOverScreen(game));
             restart();
         }
 
         bulletUtil.checkForBulletCollisionWithObstacle(obstacles, score);
         bulletUtil.checkForCollisionWithEnemy(enemies, score);
         upgradeUtil.checkForCollision(player);
-
-        if (timer.levelCleared()) {
-            game.setScreen(new StartScreen(game));
-
-            //changeLevel();
-        }
     }
 
     private void blockPlayerLeavingTheWorld() {
@@ -171,31 +150,12 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
-    private void drawDebug() {
-        //shapeRenderer.rect(0,0,100, 20);
-        player.drawDebug(shapeRenderer);
-        for (Bullet bullet : bullets) {
-            bullet.drawDebug(shapeRenderer);
-        }
-
-        for (Obstacle obstacle : obstacles) {
-            obstacle.drawDebug(shapeRenderer);
-        }
-
-        for (Enemy enemy : enemies) {
-            enemy.drawDebug(shapeRenderer);
-        }
-
-        for (Bullet bullet: enemyBullets) {
-            bullet.drawDebug(shapeRenderer);
-        }
-
-        for (Upgrade upgrade : upgrades) {
-            upgrade.drawDebug(shapeRenderer);
-        }
-    }
-
     private void draw() {
+        batch.draw(background, 0, 0);
+        batch.draw(new TextureRegion(new Texture("bar_1.png")), 0, WORLD_HEIGHT - topOffset, WORLD_WIDTH, topOffset);
+        drawHp();
+        drawScore();
+        drawShield();
         player.draw(batch);
         for (Upgrade upgrade : upgrades) {
             upgrade.draw(batch);
@@ -206,6 +166,19 @@ public class GameScreen extends ScreenAdapter {
         for (Obstacle obstacle : obstacles) {
             obstacle.draw(batch);
         }
+        for (Bullet playerBullet : bullets) {
+            playerBullet.draw(batch);
+        }
+        for (EnemyBullet enemyBullet : enemyBullets) {
+            enemyBullet.draw(batch);
+        }
+        for (Explosion explosion : explosions) {
+            if (explosion.getShouldBeRemoved()) {
+                explosionUtil.removeExplosion(explosion);
+            }
+            explosion.draw(batch);
+        }
+
     }
 
     private void restart() {
@@ -216,31 +189,24 @@ public class GameScreen extends ScreenAdapter {
         enemyBullets.clear();
         player.replenishHp();
         score.reset();
-        timer.reset();
         player.resetShield();
     }
 
     private void drawScore() {
         String scoreString = "Score: " + Integer.toString(score.getScore());
         glyphLayout.setText(bitmapFont, scoreString);
-        bitmapFont.draw(batch, scoreString, leftOffset, 50);
+        bitmapFont.draw(batch, scoreString, leftOffset, WORLD_HEIGHT - topOffset/3 - 3);
     }
 
     private void drawHp() {
         String hpString = "Hp: " + Integer.toString(player.getHp());
         glyphLayout.setText(bitmapFont, hpString);
-        bitmapFont.draw(batch, hpString, leftOffset + menuOffset, 50);
+        bitmapFont.draw(batch, hpString, leftOffset + 3*menuOffset, WORLD_HEIGHT - topOffset/3 - 3);
     }
 
     private void drawShield() {
         String shieldPointsString = "Shield: " + Integer.toString(player.getShield());
         glyphLayout.setText(bitmapFont, shieldPointsString);
-        bitmapFont.draw(batch, shieldPointsString, leftOffset + 2*menuOffset, 50);
-    }
-
-    private void drawTimeLeft() {
-        String timeLeftString = "Progress: " + Long.toString((int)timer.getElapsedTimePercentage()) + "%";
-        glyphLayout.setText(bitmapFont, timeLeftString);
-        bitmapFont.draw(batch, timeLeftString, leftOffset + 3*menuOffset, 50);
+        bitmapFont.draw(batch, shieldPointsString, leftOffset + 6*menuOffset, WORLD_HEIGHT - topOffset/3 - 3);
     }
 }

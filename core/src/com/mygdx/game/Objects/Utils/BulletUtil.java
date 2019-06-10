@@ -1,9 +1,11 @@
 package com.mygdx.game.Objects.Utils;
 
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.ExplosionUtil;
 import com.mygdx.game.Objects.Abstract.GameObject;
 import com.mygdx.game.Objects.Bullet;
 import com.mygdx.game.Objects.Enemy;
+import com.mygdx.game.Objects.Explosion;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Score;
 
@@ -12,11 +14,13 @@ public class BulletUtil {
     protected float worldWidth;
     private final static int POINTS_FOR_OBSTACLE = 25;
     private final static int POINTS_FOR_ENEMY = 25;
+    private ExplosionUtil explosionUtil;
 
-    public BulletUtil(Array<Bullet> bullets, float worldWidth) {
+    public BulletUtil(Array<Bullet> bullets, float worldWidth, ExplosionUtil explosionUtil) {
         this.bullets = bullets;
         this.worldWidth = worldWidth;
         resetUpgrades();
+        this.explosionUtil = explosionUtil;
     }
 
     public void createNewBullet(GameObject object) {
@@ -56,6 +60,7 @@ public class BulletUtil {
         for (Bullet bullet : bullets) {
             for (Obstacle obstacle : obstacles) {
                 if (bullet.isObstacleColliding(obstacle)) {
+                    explosionUtil.addExplosion(obstacle.getX(), obstacle.getY());
                     obstacles.removeValue(obstacle, true);
                     bullets.removeValue(bullet, true);
                     score.increaseScore(POINTS_FOR_OBSTACLE);
@@ -68,6 +73,7 @@ public class BulletUtil {
         for (Bullet bullet : bullets) {
             for (Enemy enemy : enemies) {
                 if (bullet.isObjectColliding(enemy)) {
+                    explosionUtil.addExplosion(enemy.getX(), enemy.getY());
                     enemies.removeValue(enemy, true);
                     bullets.removeValue(bullet, true);
                     score.increaseScore(POINTS_FOR_ENEMY);

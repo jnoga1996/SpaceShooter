@@ -21,7 +21,7 @@ public class Upgrade extends GameObject {
     }
 
     private UpgradeType type;
-    public static final float COLLISION_CIRCLE_RADIUS = 5f;
+    public static final float COLLISION_CIRCLE_RADIUS = 15f;
     private static final float HEIGHT_OFFSET = 400F;
     private static final float MAX_SPEED_PER_SECOND = 100F;
     private TextureRegion sprite;
@@ -31,6 +31,15 @@ public class Upgrade extends GameObject {
         this.type = type;
         y = MathUtils.random(HEIGHT_OFFSET);
         this.collisionCircle = new Circle(x, y, COLLISION_CIRCLE_RADIUS);
+        if (type == UpgradeType.LIFE) {
+            sprite = new TextureRegion(new Texture("healthUpgrade.png"));
+        } else if (type == UpgradeType.MONEY) {
+            sprite = new TextureRegion(new Texture("moneyUpgrade.png"));
+        } else if (type == UpgradeType.SHIELD) {
+            sprite = new TextureRegion(new Texture("shieldUpgrade.png"));
+        } else if (type == UpgradeType.WEAPON_UPGRADE) {
+            sprite = new TextureRegion(new Texture("weaponUpgrade.png"));
+        }
     }
 
     public void setPosition(float x) {
@@ -65,10 +74,9 @@ public class Upgrade extends GameObject {
     }
 
     public void draw(Batch batch) {
-        sprite = new TextureRegion(new Texture(Gdx.files.internal("s2.png")), 50, 50);
-        if (type == UpgradeType.LIFE) {
-            batch.draw(sprite, getX(), getY());
-        }
+        batch.draw(sprite, x - COLLISION_CIRCLE_RADIUS, y - COLLISION_CIRCLE_RADIUS,
+                COLLISION_CIRCLE_RADIUS, COLLISION_CIRCLE_RADIUS,
+                2*COLLISION_CIRCLE_RADIUS, 2*COLLISION_CIRCLE_RADIUS, 1, 1, 0);
     }
 
     public boolean isPlayerColliding(Player player) {

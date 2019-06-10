@@ -1,5 +1,8 @@
 package com.mygdx.game.Objects;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
@@ -8,10 +11,17 @@ import com.mygdx.game.Objects.Abstract.GameObject;
 public class Bullet extends GameObject {
     public static float DEFAULT_SPEED = 450f;
     private float maxSpeed = DEFAULT_SPEED;
-    private static final float COLLISION_RADIUS = 7f;
+    protected static final float COLLISION_RADIUS = 7f;
+    protected TextureRegion sprite;
 
     public Bullet() {
         collisionCircle = new Circle(x, y, COLLISION_RADIUS);
+        sprite = new TextureRegion(new Texture("playerBullet.png"));
+    }
+
+    public void draw(Batch batch) {
+        batch.draw(sprite, x - COLLISION_RADIUS, y - COLLISION_RADIUS, COLLISION_RADIUS, COLLISION_RADIUS,
+                2*COLLISION_RADIUS, 2*COLLISION_RADIUS, 1, 1, 90);
     }
 
     public void drawDebug(ShapeRenderer shapeRenderer) {

@@ -1,7 +1,10 @@
 package com.mygdx.game.Objects.Utils;
 
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.ExplosionUtil;
 import com.mygdx.game.Objects.Enemy;
+import com.mygdx.game.Objects.Explosion;
 import com.mygdx.game.Objects.Player;
 
 import java.util.Random;
@@ -10,11 +13,13 @@ public class EnemiesUtil {
     private Array<Enemy> enemies;
     private float WORLD_WIDTH;
     private int MAX_NUMBER_OF_ENEMIES;
+    private ExplosionUtil explosionUtil;
 
-    public EnemiesUtil(Array<Enemy> enemies, float worldWidth, int maxNumberOfEnemies) {
+    public EnemiesUtil(Array<Enemy> enemies, float worldWidth, int maxNumberOfEnemies, ExplosionUtil explosionUtil) {
         this.enemies = enemies;
         this.WORLD_WIDTH = worldWidth;
         this.MAX_NUMBER_OF_ENEMIES = maxNumberOfEnemies;
+        this.explosionUtil = explosionUtil;
     }
 
     public void createNewEnemy(int enemiesToCreate) {
@@ -59,6 +64,7 @@ public class EnemiesUtil {
         for(Enemy enemy : enemies) {
             if (enemy.isEnemyColliding(player)) {
                 enemies.removeValue(enemy, true);
+                explosionUtil.addExplosion(player.getX(), player.getY());
                 player.takeDamage();
             }
         }

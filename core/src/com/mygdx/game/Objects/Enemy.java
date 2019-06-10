@@ -3,6 +3,7 @@ package com.mygdx.game.Objects;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
@@ -51,7 +52,7 @@ public class Enemy extends GameObject {
     }
 
     public void draw(Batch batch) {
-        batch.draw(sprite, x - COLLISION_CIRCLE_RADIUS, y - COLLISION_CIRCLE_RADIUS, COLLISION_CIRCLE_RADIUS, COLLISION_CIRCLE_RADIUS,
-                2*COLLISION_CIRCLE_RADIUS, 2*COLLISION_CIRCLE_RADIUS,1, 1, -90);
+        batch.draw(sprite, x - COLLISION_CIRCLE_RADIUS, y - COLLISION_CIRCLE_RADIUS,
+                COLLISION_CIRCLE_RADIUS, COLLISION_CIRCLE_RADIUS, 2*COLLISION_CIRCLE_RADIUS, 2*COLLISION_CIRCLE_RADIUS,1, 1, -90);
     }
 }

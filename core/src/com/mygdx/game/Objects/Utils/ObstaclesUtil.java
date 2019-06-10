@@ -1,6 +1,7 @@
 package com.mygdx.game.Objects.Utils;
 
 import com.badlogic.gdx.utils.Array;
+import com.mygdx.game.ExplosionUtil;
 import com.mygdx.game.Objects.Obstacle;
 import com.mygdx.game.Objects.Player;
 
@@ -10,10 +11,12 @@ public class ObstaclesUtil {
     private Array<Obstacle> obstacles;
     private final float WORLD_WIDTH;
     private static final int MAX_NUMBER_OF_OBSTACLES = 3;
+    private ExplosionUtil explosionUtil;
 
-    public ObstaclesUtil(Array<Obstacle> obstacles, float worldWidth) {
+    public ObstaclesUtil(Array<Obstacle> obstacles, float worldWidth, ExplosionUtil explosionUtil) {
         this.obstacles = obstacles;
         this.WORLD_WIDTH = worldWidth;
+        this.explosionUtil = explosionUtil;
     }
 
     public void createNewObstacle(int numberOfObstacle) {
@@ -55,6 +58,7 @@ public class ObstaclesUtil {
         for (Obstacle obstacle : obstacles) {
             if (obstacle.isPlayerColliding(player)) {
                 obstacles.removeValue(obstacle, true);
+                explosionUtil.addExplosion(player.getX(), player.getY());
                 return true;
             }
         }
